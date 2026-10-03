@@ -1,0 +1,153 @@
+// Version: 4.0.0
+type AccessControlState__201339279 =
+  {
+    var adminAssigned : Bool;
+    userRoles : Map__230067015<Principal, UserRole__91647283>
+  };
+type ChatSessionId__230961160 = Nat;
+type ChatSessionId__64086734 = ChatSessionId__706515410;
+type ChatSessionId__706515410 = Nat;
+type ChatSession__501795303 =
+  {
+    createdAt : Timestamp__753029554;
+    documentIds : [DocumentId__551117209];
+    id : ChatSessionId__64086734;
+    messages : [Message__454780518];
+    owner : Owner__563434775;
+    title : Text;
+    updatedAt : Timestamp__753029554
+  };
+type ChatSession__811719743 =
+  {
+    createdAt : Timestamp__41724193;
+    documentIds : [DocumentId__789889841];
+    id : ChatSessionId__230961160;
+    messages : [Message__264431663];
+    owner : Principal;
+    title : Text;
+    updatedAt : Timestamp__41724193
+  };
+type Citation__788453021 =
+  {
+    documentId : DocumentId__551117209;
+    documentName : Text;
+    index : Nat;
+    passage : Text
+  };
+type Citation__993951543 =
+  {
+    documentId : DocumentId__789889841;
+    documentName : Text;
+    index : Nat;
+    passage : Text
+  };
+type Data__44217153<K, V> = {var count : Nat__227979830; kvs : [var ?(K, V)]};
+type DocumentId__446996092 = Nat;
+type DocumentId__551117209 = DocumentId__668020087;
+type DocumentId__668020087 = DocumentId__446996092;
+type DocumentId__789889841 = Nat;
+type Document__57377506 =
+  {
+    extractedText : ?Text;
+    fileType : FileType__372361352;
+    id : DocumentId__668020087;
+    name : Text;
+    owner : Owner__328960907;
+    sizeBytes : Nat;
+    status : ProcessingStatus__18131938;
+    storageRef : Text;
+    uploadedAt : Timestamp__218598288
+  };
+type Document__963420256 =
+  {
+    extractedText : ?Text;
+    fileType : FileType__443396169;
+    id : DocumentId__789889841;
+    name : Text;
+    owner : Principal;
+    sizeBytes : Nat;
+    status : ProcessingStatus__647968708;
+    storageRef : Text;
+    uploadedAt : Timestamp__41724193
+  };
+type FileType__372361352 = {#markdown; #pdf; #txt};
+type FileType__443396169 = {#markdown; #pdf; #txt};
+type Internal__283199666<K, V> =
+  {children : [var ?Node__204828119<K, V>]; data : Data__44217153<K, V>};
+type Leaf__598469445<K, V> = {data : Data__44217153<K, V>};
+type Map__230067015<K, V> = Map__405889023<K, V>;
+type Map__405889023<K, V> = Map__603270868<K, V>;
+type Map__603270868<K, V> =
+  {var root : Node__204828119<K, V>; var size : Nat__227979830};
+type MessageId__291319400 = Nat;
+type MessageId__549549658 = Nat;
+type MessageId__810287564 = MessageId__291319400;
+type MessageRole__437425418 = {#assistant; #user};
+type MessageRole__512297421 = {#assistant; #user};
+type Message__264431663 =
+  {
+    citations : [Citation__993951543];
+    content : Text;
+    createdAt : Timestamp__41724193;
+    id : MessageId__549549658;
+    role : MessageRole__437425418
+  };
+type Message__454780518 =
+  {
+    citations : [Citation__788453021];
+    content : Text;
+    createdAt : Timestamp__753029554;
+    id : MessageId__810287564;
+    role : MessageRole__512297421
+  };
+type Nat__227979830 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NewActor__694455010 =
+  {
+    accessControlState : AccessControlState__201339279;
+    documents : Map__230067015<DocumentId__789889841, Document__963420256>;
+    nextDocumentId : {var value : Nat};
+    nextMessageId : {var value : Nat};
+    nextSessionId : {var value : Nat};
+    sessions :
+      Map__230067015<ChatSessionId__230961160, ChatSession__811719743>
+  };
+type Node__204828119<K, V> =
+  {#internal : Internal__283199666<K, V>; #leaf : Leaf__598469445<K, V>};
+type OldActor__463938666 = {};
+type Owner__328960907 = Owner__432551029;
+type Owner__432551029 = Principal;
+type Owner__563434775 = Owner__432551029;
+type ProcessingStatus__18131938 =
+  {#failed : Text; #pending; #processing; #ready};
+type ProcessingStatus__647968708 =
+  {#failed : Text; #pending; #processing; #ready};
+type Timestamp__218598288 = Timestamp__301639476;
+type Timestamp__301639476 = Int;
+type Timestamp__41724193 = Int;
+type Timestamp__753029554 = Timestamp__301639476;
+type UserRole__91647283 = {#admin; #guest; #user};
+{
+  "20261003_000000" : OldActor__463938666 -> NewActor__694455010
+}
+actor  {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__230067015<Principal, UserRole__91647283>
+    };
+  stable documents :
+    {
+      var root : Node__204828119<DocumentId__446996092, Document__57377506>;
+      var size : Nat__227979830
+    };
+  stable nextDocumentId : {var value : Nat};
+  stable nextMessageId : {var value : Nat};
+  stable nextSessionId : {var value : Nat};
+  stable sessions :
+    {
+      var root :
+        Node__204828119<ChatSessionId__706515410, ChatSession__501795303>;
+      var size : Nat__227979830
+    }
+};

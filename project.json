@@ -1,0 +1,20 @@
+{
+  "overview": "A dark, high-contrast web app where you upload your own documents and chat with them to get answers grounded in your files, with citations back to the exact passage.",
+  "features": [
+    "Upload PDF, TXT, and Markdown documents",
+    "Ask questions in plain language and get answers from your documents",
+    "Inline citations that reveal the exact source passage",
+    "Document library with search, rename, and delete",
+    "Multi-turn chat history you can reopen later",
+    "Sign in to keep your documents and chats private to you"
+  ],
+  "category": "productivity",
+  "tags": [
+    "ai",
+    "documents",
+    "chat",
+    "rag",
+    "developer-tools"
+  ],
+  "last_updated": "2026-10-03T13:26:13.297Z"
+}

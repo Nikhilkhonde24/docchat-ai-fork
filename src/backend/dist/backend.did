@@ -1,0 +1,178 @@
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type Timestamp = int;
+type Result__1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type ProcessingStatus = 
+ variant {
+   failed: text;
+   pending;
+   processing;
+   ready;
+ };
+type MessageRole = 
+ variant {
+   assistant;
+   user;
+ };
+type MessageId = nat;
+type Message = 
+ record {
+   citations: vec Citation;
+   content: text;
+   createdAt: Timestamp;
+   id: MessageId;
+   role: MessageRole;
+ };
+type FileType = 
+ variant {
+   markdown;
+   pdf;
+   txt;
+ };
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type DocumentView = 
+ record {
+   fileType: FileType;
+   hasExtractedText: bool;
+   id: DocumentId;
+   name: text;
+   sizeBytes: nat;
+   status: ProcessingStatus;
+   uploadedAt: Timestamp;
+ };
+type DocumentId = nat;
+type DocumentFilter = 
+ record {
+   fileType: opt FileType;
+   nameContains: opt text;
+ };
+type DocumentDetail = 
+ record {
+   extractedText: opt text;
+   fileType: FileType;
+   id: DocumentId;
+   name: text;
+   sizeBytes: nat;
+   status: ProcessingStatus;
+   storageRef: text;
+   uploadedAt: Timestamp;
+ };
+type Citation = 
+ record {
+   documentId: DocumentId;
+   documentName: text;
+   index: nat;
+   passage: text;
+ };
+type ChatSessionView = 
+ record {
+   createdAt: Timestamp;
+   documentIds: vec DocumentId;
+   id: ChatSessionId;
+   messages: vec Message;
+   title: text;
+   updatedAt: Timestamp;
+ };
+type ChatSessionSummary = 
+ record {
+   createdAt: Timestamp;
+   documentIds: vec DocumentId;
+   id: ChatSessionId;
+   messageCount: nat;
+   title: text;
+   updatedAt: Timestamp;
+ };
+type ChatSessionId = nat;
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type AskResult = 
+ record {
+   answer: Message;
+   session: ChatSessionView;
+ };
+service : {
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_start: () -> (blob);
+  /// Ask a question in a chat session. The backend retrieves the selected
+  /// documents' text, calls Caffeine Inference, and returns the answer with
+  /// numbered citations. No API key is collected or stored.
+  askQuestion: (sessionId: ChatSessionId, question: text) -> (AskResult);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  /// Start a new chat session bound to the given documents.
+  createChatSession: (title: text, documentIds: vec DocumentId) ->
+   (ChatSessionView);
+  /// Register an uploaded document. The file bytes are stored via platform
+  /// file storage; `storageRef` is the resulting reference.
+  createDocument: (name: text, fileType: FileType, sizeBytes: nat,
+   storageRef: text) -> (DocumentId);
+  /// Delete one of the caller's chat sessions.
+  deleteChatSession: (id: ChatSessionId) -> (bool);
+  /// Delete one of the caller's documents.
+  deleteDocument: (id: DocumentId) -> (bool);
+  execute: (qJson: text) -> (Result) query;
+  getApiDoc: () -> (text) query;
+  getCallerUserRole: () -> (UserRole) query;
+  /// Fetch one of the caller's chat sessions with its message history.
+  getChatSession: (id: ChatSessionId) -> (opt ChatSessionView) query;
+  /// Fetch one of the caller's documents with its extracted text preview.
+  getDocument: (id: DocumentId) -> (opt DocumentDetail) query;
+  isCallerAdmin: () -> (bool) query;
+  /// List the caller's chat sessions.
+  listChatSessions: () -> (vec ChatSessionSummary) query;
+  /// List the caller's documents, optionally filtered by name and file type.
+  listDocuments: (filter: DocumentFilter) -> (vec DocumentView) query;
+  /// Rename one of the caller's documents.
+  renameDocument: (id: DocumentId, newName: text) -> (opt DocumentView);
+  schema: () -> (text) query;
+  /// Store extracted text for a document and mark it ready.
+  setExtractedText: (id: DocumentId, "text": text) -> (opt DocumentDetail);
+  /// Mark a document's extraction as failed.
+  setProcessingFailed: (id: DocumentId, reason: text) -> (opt DocumentDetail);
+}
